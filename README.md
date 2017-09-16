@@ -1,2 +1,2 @@
 # Hanoi
-a little game on anoi's tower
+a little game on Hanoi's tower
