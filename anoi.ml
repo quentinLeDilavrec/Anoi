@@ -23,22 +23,21 @@ exception My_Error;;
 
 let move ori dest =
   match pole.(ori) with
-    []-> print_string ("there is no disk to take on the pole " ^ string_of_int ori)
+    []-> print_string ("there is no disk to take on the pole " ^ string_of_int ori ^ "\n")
   |o1::o-> if pole.(dest)!=[] && o1> List.hd(pole.(dest)) 
-  then print_string ("you can't put a disk bigger than the one under " ^ string_of_int dest)
+  then print_string ("you can't put a disk bigger than the one under " ^ string_of_int dest ^ "\n")
     else begin
       Array.set pole ori o;
       Array.set pole dest (o1::pole.(dest));
-      print_string ("you've moved a disk from " ^ string_of_int ori ^ " to " ^ string_of_int dest)
-    end;;
+      print_string ("you've moved a disk from " ^ string_of_int ori ^ " to " ^ string_of_int dest ^ "\n");
+      Array.iter (fun x -> 
+      begin 
+        if x==[] then print_string "|" 
+        else read_list print_int (List.rev x);
+        print_newline();
+      end) pole;
+          end;;
 
 move 0 1;;
 move 0 2;;
 move 1 2;;
-
-Array.iter (fun x -> 
-    begin 
-      if x==[] then print_string "|" 
-      else read_list print_int (List.rev x);
-      print_newline();
-    end) pole;;
