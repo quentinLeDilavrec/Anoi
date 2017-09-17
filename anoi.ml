@@ -4,6 +4,12 @@
 
 let pole = Array.make 3 [];;
 
+class counter = object
+  val mutable count=0
+  method step = count <- count+1
+  method get = count
+  end;;
+
 let rec make_tower h =
   if h==0 then [] else
     h::(make_tower (h-1));;
