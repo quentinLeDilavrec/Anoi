@@ -12,12 +12,8 @@ let step () = incr c;;
 let get () = !c;;
 init ();;
 
-(* Window parameters *)
-let width = 800
-and height = 300;;
-
 (* Global discs & pegs parameters *)
-let nb_discs = 8;;
+let nb_discs = 12;;
 let pegs = [|create (); create (); create ()|];;
 let disc_colors = Array.make nb_discs (rgb 0 0 0);;
 for i = 0 to (nb_discs - 1) do
@@ -26,6 +22,10 @@ for i = 0 to (nb_discs - 1) do
   and b = Random.int 255 in
     disc_colors.(i) <- (rgb r g b)
 done;;
+
+(* Window parameters *)
+let width = 8 * (15 + 10 * (nb_discs + 1)) + 80
+and height = (nb_discs + 2) * 20 + 50;;
 
 (* Draw the three pegs *)
 let draw_pegs () =
@@ -77,7 +77,7 @@ let update_window () =
 
 (* Print a movement and update the program state accordingly *)
 let movement origin destination =
-  print_string ("| move a disc from rod " ^ (string_of_int origin) ^ " to rod " ^ (string_of_int destination));
+  print_string ("| move a disc from peg " ^ (string_of_int origin) ^ " to peg " ^ (string_of_int destination));
   print_newline ();
   push (pop pegs.(origin)) pegs.(destination);
   update_window ();;
