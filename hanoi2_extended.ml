@@ -27,6 +27,9 @@ done;;
 let width = 8 * (15 + 10 * (nb_discs + 1)) + 80
 and height = (nb_discs + 2) * 20 + 50;;
 
+(* Animation setup *)
+let animation_speed = 10.;;
+
 (* Draw the three pegs *)
 let draw_pegs () =
   let draw_single_peg () =
@@ -72,7 +75,6 @@ let update_window () =
       moveto (3*width/4) ((length pegs.(2)) * step);
       iter f pegs.(2)
     end;
-      sleepf 0.1
   end;;
 
 (* Print a movement and update the program state accordingly *)
@@ -80,7 +82,8 @@ let movement origin destination =
   print_string ("| move a disc from peg " ^ (string_of_int origin) ^ " to peg " ^ (string_of_int destination));
   print_newline ();
   push (pop pegs.(origin)) pegs.(destination);
-  update_window ();;
+  update_window ();
+  sleepf (1. /. animation_speed);;
 
 (* Recursively solve the Hanoi towers problem. height is the height of the tower to move from src to dst, and other is the middle rod *)
 let rec hanoi height src other dst =
