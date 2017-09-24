@@ -18,7 +18,7 @@ for i = 0 to (nb_discs - 1) do
   let r = Random.int 255
   and g = Random.int 255
   and b = Random.int 255 in
-    disc_colors.(i) <- (rgb r g b)
+    disc_colors.(i) <- rgb r g b
 done;;
 
 (* Window parameters *)
@@ -30,12 +30,10 @@ let animation_speed = 10.;;
 
 (* Draw the three pegs *)
 let draw_pegs () =
+  let peg_width = 20
+  and peg_height = height - 50 in
   let draw_single_peg () =
-    rlineto 10 0;
-    rlineto 0 (height - 50);
-    rlineto (-20) 0;
-    rlineto 0 (50 - height);
-    rlineto 10 0 in
+    draw_rect (current_x () - peg_width / 2) (current_y ()) peg_width peg_height in
   let step = width / 4 in
     begin
       set_color (rgb 0 0 0);
@@ -60,8 +58,10 @@ let update_window () =
     let f = fun (a,b) -> (a+x,b+y) in
       Array.map f disc_poly
   and draw_disc id =
-    let poly = [|((15 + 10 * id),0);(15 + 10 * id,20);(-(15 + 10 * id),20);(-(15 + 10 * id),0)|] in
-      fill_poly (translate_disc poly (current_x ()) (current_y ())) in
+    let disc_height = 20
+    and disc_base_width = 30 in
+    let disc_width = disc_base_width + 20 * id in
+    fill_rect (current_x () - disc_width / 2) (current_y ()) disc_width disc_height in
   let step = 20 in begin
     clear_graph ();
     draw_pegs ();
@@ -105,4 +105,6 @@ open_graph (" " ^ (string_of_int width) ^ "x" ^ (string_of_int height) ^ "-0+0")
 init ();;
 hanoi nb_discs 0 1 2;;
 print_string ("Total number of moves: " ^ (string_of_int (counter#get ())));;
+
+ignore (Graphics.read_key ());;
 
