@@ -1,20 +1,18 @@
 #load "graphics.cma";;
-#load "stack.cma";;
 #load "unix.cma";;
 open Graphics;;
-open Stack;;
 open Unix;;
 
 (* Global steps counter *)
-let c = ref 0;;
-let init () = c := 0;;
-let step () = incr c;;
-let get () = !c;;
-init ();;
+class counter = object
+  val mutable count=0
+  method step = count <- count+1
+  method get = count
+  end;;
 
 (* Global discs & pegs parameters *)
 let nb_discs = 12;;
-let pegs = [|create (); create (); create ()|];;
+let pegs = [|Stack.create (); Stack.create (); Stack.create ()|];;
 let disc_colors = Array.make nb_discs (rgb 0 0 0);;
 for i = 0 to (nb_discs - 1) do
   let r = Random.int 255
@@ -53,7 +51,7 @@ let draw_pegs () =
 let init () =
   draw_pegs ();
   for i = (nb_discs - 1) downto 0 do
-    push i pegs.(0)
+    Stack.push i pegs.(0)
   done;;
 
 (* Update the graphics state *)
@@ -68,12 +66,12 @@ let update_window () =
     clear_graph ();
     draw_pegs ();
     let f = fun id -> rmoveto 0 (-step); set_color disc_colors.(id); draw_disc id in begin
-      moveto (width/4) ((length pegs.(0)) * step);
-      iter f pegs.(0);
-      moveto (width/2) ((length pegs.(1)) * step);
-      iter f pegs.(1);
-      moveto (3*width/4) ((length pegs.(2)) * step);
-      iter f pegs.(2)
+      moveto (width/4) ((Stack.length pegs.(0)) * step);
+      Stack.iter f pegs.(0);
+      moveto (width/2) ((Stack.length pegs.(1)) * step);
+      Stack.iter f pegs.(1);
+      moveto (3*width/4) ((Stack.length pegs.(2)) * step);
+      Stack.iter f pegs.(2)
     end;
   end;;
 
@@ -81,17 +79,17 @@ let update_window () =
 let movement origin destination =
   print_string ("| move a disc from peg " ^ (string_of_int origin) ^ " to peg " ^ (string_of_int destination));
   print_newline ();
-  push (pop pegs.(origin)) pegs.(destination);
+  Stack.push (Stack.pop pegs.(origin)) pegs.(destination);
   update_window ();
   sleepf (1. /. animation_speed);;
 
 (* Recursively solve the Hanoi towers problem. height is the height of the tower to move from src to dst, and other is the middle rod *)
 let rec hanoi height src other dst =
-  if height = 1 then (movement src dst; step ())
+  if height = 1 then (movement src dst; counter#step ())
   else begin
     hanoi (height - 1) src dst other;
     movement src dst;
-    step ();
+    counter#step ();
     hanoi (height - 1) other src dst;
   end;;
 
@@ -106,4 +104,5 @@ open_graph (" " ^ (string_of_int width) ^ "x" ^ (string_of_int height) ^ "-0+0")
 
 init ();;
 hanoi nb_discs 0 1 2;;
-print_string ("Total number of moves: " ^ (string_of_int (get ())));;
+print_string ("Total number of moves: " ^ (string_of_int (counter#get ())));;
+
