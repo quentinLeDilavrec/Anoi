@@ -3,7 +3,9 @@
 open Graphics;;
 open Unix;;
 
-(* Global steps counter *)
+(*-------------Parameters and constants----------------*)
+
+(* Global step counter *)
 let counter = object
   val mutable count = 0
   method step () = count <- count+1
@@ -27,6 +29,8 @@ and height = (nb_discs + 2) * 20 + 50;;
 
 (* Animation setup *)
 let animation_speed = 10.;;
+
+(*--------------Main functions---------------*)
 
 (* Draw the three pegs *)
 let draw_pegs () =
@@ -93,6 +97,8 @@ let rec hanoi height src other dst =
     hanoi (height - 1) other src dst;
   end;;
 
+(*----------------Main program-----------------*)
+
 (* Initialize random number generator *)
 Random.self_init;;
 
@@ -103,8 +109,10 @@ close_graph();;
 open_graph (" " ^ (string_of_int width) ^ "x" ^ (string_of_int height) ^ "-0+0");;
 
 init ();;
+(* Assign identifiers (e.g. 0 1 2) to the three pegs *)
 hanoi nb_discs 0 1 2;;
 print_string ("Total number of moves: " ^ (string_of_int (counter#get ())));;
 
+(* Keep the window open until the next key press *)
 ignore (Graphics.read_key ());;
 
