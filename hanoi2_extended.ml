@@ -4,10 +4,10 @@ open Graphics;;
 open Unix;;
 
 (* Global steps counter *)
-class counter = object
-  val mutable count=0
-  method step = count <- count+1
-  method get = count
+let counter = object
+  val mutable count = 0
+  method step () = count <- count+1
+  method get () = count
   end;;
 
 (* Global discs & pegs parameters *)
